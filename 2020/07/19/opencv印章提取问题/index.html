@@ -1,0 +1,249 @@
+
+<!DOCTYPE html>
+<html lang="en" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>opencv印章提取问题 - SHinIchi</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="SHinIch MateosCZ,"> 
+    <meta name="description" content="07/19问题：
+
+如何判断一个印章提取出来的效果是好还是坏？
+
+对于网上找的分辨率低的图像在使用基于hsv的图像分割方法时，效果很差，但自己拍照出来的画质很好的印章效果很好。
+
+想要通过计算机自己,"> 
+    <meta name="author" content="MateosCZ"> 
+    <link rel="alternative" href="atom.xml" title="SHinIchi" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+
+    
+<link rel="stylesheet" href="/css/diaspora.css">
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads"
+        src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body class="loading">
+    <span id="config-title" style="display:none">SHinIchi</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" data-url="http://www.mateoscz.cn"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">opencv印章提取问题</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">opencv印章提取问题</h1>
+        <div class="stuff">
+            <span>七月 19, 2020</span>
+            
+  <ul class="post-tags-list" itemprop="keywords"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/opencv/" rel="tag">opencv</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <h2 id="07-19"><a href="#07-19" class="headerlink" title="07/19"></a>07/19</h2><p>问题：</p>
+<ol>
+<li><p>如何判断一个印章提取出来的效果是好还是坏？</p>
+</li>
+<li><p>对于网上找的分辨率低的图像在使用基于hsv的图像分割方法时，效果很差，但自己拍照出来的画质很好的印章效果很好。</p>
+</li>
+<li><p>想要通过计算机自己判断印章提取出来的效果是否是好是坏让计算机进行微调。</p>
+</li>
+<li><p>提取多个印章相互有少量接触的时候，输出的印章应该是怎样的。是经过分离后的印章吗，需不需要对印章重叠的部分做一个分离和复原。</p>
+</li>
+<li><p>像素数较少的图片经过</p>
+</li>
+<li><p>我们的印章提取的输入图像对于分辨率有没有什么要求，从网上找到的一些测试用的图像有的分辨率很低，有的印章大小只有150*150左右，这样的图像损失了非常多的信息，有的图像中印章内部字的像素甚至已经接近黑色，无法根据threshold提取出来。我们在实际应用中会接受这样的输入吗？</p>
+</li>
+<li><p>otsu法自适应阈值，只能二值化，怎样分辨出白色和黑色。也就是划分出三种颜色。</p>
+</li>
+</ol>
+<h1 id="文献综述"><a href="#文献综述" class="headerlink" title="文献综述"></a>文献综述</h1><h2 id="What-Is-a-Good-Image-Segment"><a href="#What-Is-a-Good-Image-Segment" class="headerlink" title="What Is a Good Image Segment?"></a>What Is a Good Image Segment?</h2><h3 id="A-Unified-Approach-to-Segment-Extraction-Shai-Bagon-Oren-Boiman-and-Michal-Irani-Weizmann-Institute-of-Science-Rehovot-Israel"><a href="#A-Unified-Approach-to-Segment-Extraction-Shai-Bagon-Oren-Boiman-and-Michal-Irani-Weizmann-Institute-of-Science-Rehovot-Israel" class="headerlink" title="A Unified Approach to Segment Extraction Shai Bagon, Oren Boiman, and Michal Irani Weizmann Institute of Science, Rehovot, Israel"></a>A Unified Approach to Segment Extraction Shai Bagon, Oren Boiman, and Michal Irani Weizmann Institute of Science, Rehovot, Israel</h3><ol>
+<li><p>Different type of segment 不同种类的图像分割。<br>不同种类的图像分割产生了不同的图像分割方法：统一的通过颜色进行分割、根据纹理进行分割、对称分割、语义上有意义的部分进行分割。</p>
+</li>
+<li><p>给出一个方法定义什么是好的分割出来的图像</p>
+</li>
+</ol>
+<p><a href="https://e2eml.school/how_convolutional_neural_networks_work.html" target="_blank" rel="noopener">https://e2eml.school/how_convolutional_neural_networks_work.html</a> CNN识别图像的intuition讲解</p>
+<p><a href="https://github.com/HasnainRaz/Fast-SRGAN" target="_blank" rel="noopener">https://github.com/HasnainRaz/Fast-SRGAN</a> Github上一个低分辨率图像处理到高分辨率图像的开源项目</p>
+<p><a href="https://image.online-convert.com/convert-to-tiff" target="_blank" rel="noopener">https://image.online-convert.com/convert-to-tiff</a> 用来转换图像的网站，可以转换图像大小等</p>
+<p><a href="https://www.jianshu.com/p/e74eb43960a1" target="_blank" rel="noopener">https://www.jianshu.com/p/e74eb43960a1</a> markdown数学公式语法</p>
+<p>同或符号$a\bigodot b$, 意义是ab二者相同则为1，不同则为0</p>
+<p><a href="https://www.zhihu.com/question/56801298/answer/1118437233" target="_blank" rel="noopener">https://www.zhihu.com/question/56801298/answer/1118437233</a> 深度学习+inpainting的知乎问答，有推荐论文以及方法的整理</p>
+<p><a href="https://www.tuicool.com/articles/IJZFren" target="_blank" rel="noopener">https://www.tuicool.com/articles/IJZFren</a> tensorflow中用深度学习修复图像的方法</p>
+<p><a href="https://github.com/kfcd/chaizi" target="_blank" rel="noopener">https://github.com/kfcd/chaizi</a> 汉字拆字字典</p>
+<p><a href="https://github.com/howl-anderson/hanzi_chaizi" target="_blank" rel="noopener">https://github.com/howl-anderson/hanzi_chaizi</a> 汉字拆字</p>
+<p>先看：<br><a href="https://zhuanlan.zhihu.com/p/33752313" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/33752313</a> 通俗理解GAN</p>
+<p>再看：<br><a href="https://www.msra.cn/zh-cn/news/features/gan-20170511" target="_blank" rel="noopener">https://www.msra.cn/zh-cn/news/features/gan-20170511</a> 微软亚研院对gan的讲解 </p>
+<p><a href="https://zhuanlan.zhihu.com/p/57415263" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/57415263</a> matplotlib 的通俗讲解</p>
+<p><a href="https://www.pyimagesearch.com/start-here/" target="_blank" rel="noopener">https://www.pyimagesearch.com/start-here/</a> 计算机视觉入门</p>
+<p><a href="https://blog.usejournal.com/making-of-a-chinese-characters-dataset-92d4065cc7cc" target="_blank" rel="noopener">https://blog.usejournal.com/making-of-a-chinese-characters-dataset-92d4065cc7cc</a> 汉字数据集</p>
+<p><a href="https://blog.csdn.net/Taily_Duan/article/details/51506776" target="_blank" rel="noopener">https://blog.csdn.net/Taily_Duan/article/details/51506776</a> 一种hsv各个颜色的阈值</p>
+<p><a href="https://github.com/pathak22/context-encoder" target="_blank" rel="noopener">https://github.com/pathak22/context-encoder</a> 一个图像修复的仓库</p>
+<p><a href="https://www.zhihu.com/question/25694074" target="_blank" rel="noopener">https://www.zhihu.com/question/25694074</a> 关于计算机学科论文不公开源码的问题</p>
+<p><a href="https://github.com/rtshadow/biometrics" target="_blank" rel="noopener">https://github.com/rtshadow/biometrics</a> 指纹识别的一个仓库，参考图像修复</p>
+<p><a href="https://www.jianshu.com/p/f1d9f2482191" target="_blank" rel="noopener">https://www.jianshu.com/p/f1d9f2482191</a> gabor滤波器在opencv中的使用</p>
+<p><a href="https://github.com/Utkarsh-Deshmukh/Fingerprint-Enhancement-Python" target="_blank" rel="noopener">https://github.com/Utkarsh-Deshmukh/Fingerprint-Enhancement-Python</a> gabor增强指纹图像</p>
+<p><a href="https://github.com/Vandermode/ERRNet" target="_blank" rel="noopener">https://github.com/Vandermode/ERRNet</a> 消除照片中的玻璃反光的仓库</p>
+<h2 id="现有思路"><a href="#现有思路" class="headerlink" title="现有思路"></a>现有思路</h2><ol>
+<li><p>先通过对象检测确定印章位置，然后确定对象边界，再对印章进行预处理（可以不用了，预想的前提就是已经做好框选了）</p>
+</li>
+<li><p>进行预处理，对分辨率低的图像做变换，修复到高分辨率的图像，之后进行印章提取</p>
+</li>
+<li><p>统计图像直方图特征，来调整threshold和高斯模糊以及腐蚀膨胀的卷积核大小</p>
+</li>
+<li><p>在原来的印章上做一个，纯色的红色</p>
+</li>
+<li><p>给好位置，印章剪出来，干净化，去掉噪声</p>
+</li>
+<li><p>印章 圆环，断裂的相关性</p>
+</li>
+<li><p>大脑能做的，理论上计算机也能够做到</p>
+</li>
+<li><p>分辨率的判断，如果分辨率低就达到分辨率</p>
+</li>
+<li><p>对印章的黑色噪声分类处理，与红色接触的黑色噪声判定为目标区域重置为红色，周围都是白色的黑色噪声判定为背景区域重置为白色。使用滤波器进行操作，最后, 经过反复比较, 采用了如下的噪声消除策略<br>3<em>3方窗滤波器前后向遍历方式扫描一次, 消除大部分黑色噪声<br>3</em>3方窗滤波器顺序扫描一次, 消除剩余黑色噪声<br>十字型滤波器进行三次低通滤波, 消除高频噪声</p>
+</li>
+</ol>
+<ol start="10">
+<li><p>先对印章消除黑色噪声，之后再对印章效果不好的做修复处理</p>
+</li>
+<li><p>汉字深度学习数据集，补全磨损的汉字</p>
+</li>
+</ol>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        
+                            <li title='0' data-url='http://np01.sycdn.kuwo.cn/bae424d5e5246ff9e5e8321633adb0e1/5e5b529f/resource/n2/60/32/2942729938.mp3'></li>
+                        
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+        data-ae='false'
+        data-ci=''
+        data-cs=''
+        data-r=''
+        data-o=''
+        data-a=''
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+
+
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+
+
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+
+
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>
